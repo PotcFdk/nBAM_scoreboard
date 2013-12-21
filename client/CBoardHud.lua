@@ -1,10 +1,11 @@
-class 'BoardHud'
+class 'CBoardHud'
 
-function BoardHud:__init()
+function CBoardHud:__init(CBoardClient, width, height, rows)
+	self.CBoardClient = CBoardClient;
 
 	-- Settings:
-	self.fBoardWidth = 0.4;
-	self.fBoardHeight = 0.75;
+	self.fBoardWidth = width;
+	self.fBoardHeight = height;
 
 	self.Color_BordersColor = Color(255, 255, 255, 255);
 
@@ -19,7 +20,7 @@ function BoardHud:__init()
 						   };
 	self.fPlayerRowHeight = 25;
 
-	self.tBorderRows = 
+	self.tBorderRows = rows or
 	{
 		{name = "ID", width = 0.1, getter = function(p) return p:GetId(); end },
 		{name = "Player", width = 0.8, getter = function(p) return p:GetName(); end},
@@ -32,34 +33,33 @@ function BoardHud:__init()
 								 }
 	self.fScrollLinePadding = 5;
 
-	self:update();
-
-	self:setStartShowRow(0);
+	self:Update();
 	
 	-- Attach events handlers
 	Events:Subscribe("Render", self, self.Render);
-	Events:Subscribe("MouseScroll", self, self.Scroll);
 end
 
-function BoardHud:update()
-	self.ScreenSize = { width = Render.Size.x, height = Render.Size.y };
+function CBoardHud:Update()
+	self.CBoardClient:Update();
+
+	self.ScreenSize = Render:GetScreenSize();
 	self.BoardPosition = self:getPosition();
 	self.BoardSize = self:getSize();
-	self.ServerPlayers = BoardClient:getPlayers();
 	self.iAvailibleRows = self:getAvailibleRows();
+
 
 	self:ResetBoardRealHeight();
 	self:ResetRowsCounter();
 end
 
-function BoardHud:getSize()
+function CBoardHud:getSize()
 	return { 
 				width = math.floor(self.ScreenSize.width * self.fBoardWidth), 
 				height = math.floor(self.ScreenSize.height * self.fBoardHeight)
 		   };
 end
 
-function BoardHud:getPosition()
+function CBoardHud:getPosition()
 	local size = self:getSize();
 	return { 
 				x = math.floor((self.ScreenSize.width / 2) - (size.width / 2)),
@@ -68,55 +68,43 @@ function BoardHud:getPosition()
 end
 
 
-function BoardHud:getAvailibleRows()
-	return math.floor(math.min(((self.BoardSize.height - self.fHeaderRowHeight) / self.fPlayerRowHeight), #self.ServerPlayers));
+function CBoardHud:getAvailibleRows()
+	return math.floor(math.min(((self.BoardSize.height - self.fHeaderRowHeight) / self.fPlayerRowHeight), #self.CBoardClient:getPlayers()));
 end 
 
-function BoardHud:ResetRowsCounter()
+function CBoardHud:ResetRowsCounter()
 	self._rows = 0;
 	return self;
 end 
 
-function BoardHud:IncreaseRowsCounter(num)
+function CBoardHud:IncreaseRowsCounter(num)
 	num = num or 1;
 	self._rows = self._rows + num;
 	return self;
 end
 
-function BoardHud:getRowsCounter()
+function CBoardHud:getRowsCounter()
 	return self._rows or 0;
 end 
 
-function BoardHud:ResetBoardRealHeight()
+function CBoardHud:ResetBoardRealHeight()
 	self.fBoardRealHeight = 0;
 	return self;
 end 
 
-function BoardHud:IncreaseBoardRealHeight(num)
+function CBoardHud:IncreaseBoardRealHeight(num)
 	num = num or 1;
 	self.fBoardRealHeight = self.fBoardRealHeight + num;
 	return self;
 end
 
-function BoardHud:getBoardRealHeight()
+function CBoardHud:getBoardRealHeight()
 	return self.fBoardRealHeight or 0;
 end
 
-function BoardHud:getStartShowRow()
-	return self.iStartShowRow;
-end
 
-function BoardHud:setStartShowRow(row)
-	self.iStartShowRow = math.max(row, 0);
-	if (self.iStartShowRow + self:getAvailibleRows() > #self.ServerPlayers) then
-		self.iStartShowRow = #self.ServerPlayers - self:getAvailibleRows();
-	end
-	return self;
-end
-
-
-function BoardHud:Render()
-	self:update();
+function CBoardHud:Render()
+	self:Update();
 	if (not Key:IsDown(18))then
 			return end;
 
@@ -128,7 +116,7 @@ function BoardHud:Render()
 	self:DrawScrollLine();
 end
 
-function BoardHud:DrawHeader()
+function CBoardHud:DrawHeader()
 	Render:FillArea(Vector2(self.BoardPosition.x-1, self.BoardPosition.y), 
 		Vector2(self.BoardSize.width + 1, self.fHeaderRowHeight), self.Color_HeaderColor);
 
@@ -149,16 +137,16 @@ function BoardHud:DrawHeader()
 	return self;
 end
 
-function BoardHud:DrawCanvas()
+function CBoardHud:DrawCanvas()
 	-- Under Header line
-	Render:DrawLine(Vector2(self.BoardPosition.x, self.BoardPosition.y + self.fHeaderRowHeight), 
-		Vector2(self.BoardPosition.x + self.BoardSize.width, self.BoardPosition.y + self.fHeaderRowHeight), 
+	Render:DrawLine(Vector2(self.BoardPosition.x - 1, self.BoardPosition.y + self.fHeaderRowHeight), 
+		Vector2(self.BoardPosition.x + self.BoardSize.width + 1, self.BoardPosition.y + self.fHeaderRowHeight), 
 		self.Color_BordersColor);
 
 	return self;
 end
 
-function BoardHud:DrawPlayerRow(player, ddd)
+function CBoardHud:DrawPlayerRow(player, ddd)
 	local row = self:getRowsCounter() - 1;
 	local y =  math.floor(self.BoardPosition.y + self:getBoardRealHeight());
 	Render:FillArea(Vector2(self.BoardPosition.x - 1, y), 
@@ -180,32 +168,26 @@ function BoardHud:DrawPlayerRow(player, ddd)
 	return self;
 end
 
-function BoardHud:DrawPlayersRows()
+function CBoardHud:DrawPlayersRows()
 	for i = 1, self.iAvailibleRows do
-		local player = self.ServerPlayers[i + self:getStartShowRow()];
-		self:DrawPlayerRow(player, i + self:getStartShowRow());
+		local player = self.CBoardClient:getPlayers()[i + self.CBoardClient:getStartShowRow()];
+		self:DrawPlayerRow(player, i + self.CBoardClient:getStartShowRow());
 	end
 	return self;
 end
 
 
-function BoardHud:DrawScrollLine()
+function CBoardHud:DrawScrollLine()
 
-	if (#self.ServerPlayers <= self:getAvailibleRows()) then
+	if (#self.CBoardClient:getPlayers() <= self:getAvailibleRows()) then
 		return end;
 
 	local boardHeight = self:getBoardRealHeight();
-	local scrollHeight = math.floor((boardHeight - self.fHeaderRowHeight) * (self:getAvailibleRows() / #self.ServerPlayers));
-	local scrollPosY = math.floor((self.BoardPosition.y + self.fHeaderRowHeight) + ((boardHeight - self.fHeaderRowHeight) * (self:getStartShowRow() / #self.ServerPlayers)))
+	local scrollHeight = math.floor((boardHeight - self.fHeaderRowHeight) * (self:getAvailibleRows() / #self.CBoardClient:getPlayers()));
+	local scrollPosY = math.floor((self.BoardPosition.y + self.fHeaderRowHeight) + ((boardHeight - self.fHeaderRowHeight) * (self.CBoardClient:getStartShowRow() / #self.CBoardClient:getPlayers())))
 
 	Render:FillArea(Vector2(self.BoardPosition.x + self.BoardSize.width + self.fScrollLinePadding, scrollPosY), 
 		Vector2(self.fScrollLineWidth, scrollHeight), self.Color_ScrollLineColor.default);
 
 	return self;
 end
-
-function BoardHud:Scroll(args)
-	self:setStartShowRow(self:getStartShowRow() - args.delta);
-end
-
-BoardHud = BoardHud();

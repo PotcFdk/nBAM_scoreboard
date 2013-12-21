@@ -1,9 +1,4 @@
-class 'BoardClient'
-
-
-function BoardClient:__init() end
-
-function BoardClient:getPlayers()
+function Client:getServerPlayers()
 	local players = {LocalPlayer};
 	for p in Client:GetPlayers() do
 		table.insert(players, p);
@@ -18,5 +13,3 @@ function BoardClient:getPlayers()
 
 	return players;
 end
-
-BoardClient = BoardClient();
