@@ -26,7 +26,6 @@ Use "Mouse Scroll" for scroll players list.
 
 
 ###FAQ
-
-##How can i change collumns?
+####How can i change collumns?
 Open CBoardClient.lua, in "CBoardClient:__init" you can find "self.tBorderColls
 ". It is columns data. Change it, if u need.
