@@ -11,11 +11,18 @@ function CBoardServer:__init()
 	self.fLastUpdate = 0;
 
 	-- Attach event handlers
-	Events:Subscribe("PostTick", self, self.onPostTick)
+	Events:Subscribe("PostTick", self, self.onPostTick);
+
+	-- Attach network events handlers
+	Network:Subscribe("SyncRequest", self, self.onSyncRequest);
 end
 
 function CBoardServer:SyncPlayersData()
-	Network:Broadcast("SyncPlayersData", self:getPlayersDataList());
+	Network:Broadcast("SyncPlayersData", 
+		{
+			playersData = self:getPlayersDataList(),
+			slotsNum = Config:GetValue("Server", "MaxPlayers")
+		});
 	return self;
 end
 
@@ -39,6 +46,11 @@ function CBoardServer:onPostTick()
 		self:SyncPlayersData();
 		self.fLastUpdate = Server:GetElapsedSeconds();
 	end
+end
+
+-- Network event handlers:
+function CBoardServer:onSyncRequest(source)
+	self:SyncPlayersData();
 end
 
 

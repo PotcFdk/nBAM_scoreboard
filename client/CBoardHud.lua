@@ -20,6 +20,7 @@ function CBoardHud:__init(CBoardClient, width, height, collumns)
 							    Color(0, 0, 0, 70); -- even rows
 							    Color(0, 0, 0, 50); -- odd rows
 						   };
+	self.Color_LocalPlayerRowColor = Color(255, 255, 255, 70);
 	self.fPlayerRowHeight = 25;
 
 	self.tBorderColls = collumns or
@@ -34,6 +35,11 @@ function CBoardHud:__init(CBoardClient, width, height, collumns)
 									hover 	= Color(0, 0, 0, 150)
 								 }
 	self.fScrollLinePadding = 5;
+
+	self.Color_SlotsInfo = Color(255, 255, 255, 255);
+	self.iSlotsInfoTextSize = 14;
+	self.tSlotsInfoTextPadding = {right = 10, top = 10};
+
 
 	self:Update();
 	
@@ -137,11 +143,12 @@ function CBoardHud:DrawCanvas()
 	return self;
 end
 
-function CBoardHud:DrawPlayerRow(player, ddd)
+function CBoardHud:DrawPlayerRow(player)
 	local row = self:getRowsCounter() - 1;
 	local y =  math.floor(self.BoardPosition.y + self:getBoardRealHeight());
+	local color = (player == LocalPlayer) and self.Color_LocalPlayerRowColor or self.tPlayerRowColor[(row % 2) + 1];
 	Render:FillArea(Vector2(self.BoardPosition.x - 1, y), 
-			Vector2(self.BoardSize.width + 1, self.fPlayerRowHeight), self.tPlayerRowColor[(row % 2) + 1]);
+			Vector2(self.BoardSize.width + 1, self.fPlayerRowHeight), color);
 
 
 	-- Player collumns:
@@ -149,7 +156,7 @@ function CBoardHud:DrawPlayerRow(player, ddd)
 	for i, v in ipairs(self.tBorderColls) do
 		local text = tostring(v.getter(self.CBoardClient, player));
 		local height = Render:GetTextHeight(text, self.fTextSize, 1);
-		Render:DrawBorderedText(Vector2(w + self.BoardPosition.x + 10, y + (height / 2)), text..tostring(ddd), 
+		Render:DrawBorderedText(Vector2(w + self.BoardPosition.x + 10, y + (height / 2)), text, 
    			player:GetColor(), self.fTextSize, 1);
 		w = w + math.floor(self.BoardSize.width * v.width);
 	end
@@ -162,14 +169,15 @@ end
 function CBoardHud:DrawPlayersRows()
 	for i = 1, self.iAvailibleRows do
 		local player = self.CBoardClient:getPlayers()[i + self.CBoardClient:getStartShowRow()];
-		self:DrawPlayerRow(player, i + self.CBoardClient:getStartShowRow());
+		if (self.CBoardClient:isPlayerAllowedForDraw(player)) then
+			self:DrawPlayerRow(player);
+		end
 	end
 	return self;
 end
 
 
 function CBoardHud:DrawScrollLine()
-
 	if (#self.CBoardClient:getPlayers() <= self:getAvailibleRows()) then
 		return end;
 
@@ -180,6 +188,15 @@ function CBoardHud:DrawScrollLine()
 	Render:FillArea(Vector2(self.BoardPosition.x + self.BoardSize.width + self.fScrollLinePadding, scrollPosY), 
 		Vector2(self.fScrollLineWidth, scrollHeight), self.Color_ScrollLineColor.default);
 
+	return self;
+end
+
+
+function CBoardHud:DrawSlotsInfo()
+	local text = "Player: " .. tostring(self.CBoardClient:getPlayersCount()) .. "/" .. tostring(self.CBoardClient:getServerSlots());
+	local width = Render:GetTextWidth(text, self.iSlotsInfoTextSize, 1);
+	Render:DrawBorderedText(Vector2(self.BoardPosition.x + self.BoardSize.width - self.tSlotsInfoTextPadding.right - width, self.BoardPosition.y + self:getBoardRealHeight() + self.tSlotsInfoTextPadding.top), text, 
+   			self.Color_SlotsInfo, self.iSlotsInfoTextSize, 1);
 	return self;
 end
 
@@ -195,4 +212,5 @@ function CBoardHud:Render()
 	self:DrawCanvas();
 	self:DrawPlayersRows();
 	self:DrawScrollLine();
+	self:DrawSlotsInfo();
 end
