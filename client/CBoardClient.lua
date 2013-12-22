@@ -7,10 +7,12 @@ function CBoardClient:__init()
 	self.fBoardWidth = 0.4;
 	self.fBoardHeight = 0.75;
 
+	self.iActivationButton = 18;
+
 	self.tBorderColls = 
 	{
 		{name = "ID", width = 0.1, getter = function(CBoardClientInstance, p) return p:GetId(); end },
-		{name = "Player", width = 0.5, getter = function(CBoardClientInstance, p) return p:GetName(); end},
+		{name = "Player", width = 0.5, getter = function(CBoardClientInstance, p) return string.sub(p:GetName(), 1, 40); end},
 		{name = "Money", width = 0.3, getter = function(CBoardClientInstance, p) return "$"..formatNumber(self.tServerPlayersData[p:GetId()].money); end},
 		{name = "Ping", width = 0.1, getter = function(CBoardClientInstance, p) return tostring(self.tServerPlayersData[p:GetId()].ping); end},
 	};
@@ -20,15 +22,13 @@ function CBoardClient:__init()
 	self.tServerPlayersData = {};
 	self.iServerSlots = 0;
 
+
 	-- Create an instance of CBoardGUI
 	self.CBoardGUI = CBoardHud(self, self.fBoardWidth, self.fBoardHeight, self.tBorderColls);
 
 	-- Attach events handlers
 	Events:Subscribe("MouseScroll", self, self.onMouseScroll);
-	Events:Subscribe("PlayerJoin", self, function()
-		CDebug:Print("onPlayerJoinHandler");
-		self:SyncRequest(); 
-	end);
+	Events:Subscribe("PlayerJoin", self, function() self:SyncRequest(); end);
 
 	-- Attach network events handlers
 	Network:Subscribe("SyncPlayersData", self, self.onSyncPlayersData);
@@ -40,8 +40,8 @@ function CBoardClient:Update()
 end
 
 function CBoardClient:SyncRequest()
-	CDebug:Print("CBoardClient:SyncRequest");
 	Network:Send("SyncRequest", LocalPlayer);
+	return self;
 end
 
 -- Setters/Getters:
@@ -78,9 +78,15 @@ function CBoardClient:isPlayerAllowedForDraw(player)
 	return type(self.tServerPlayersData[player:GetId()]) ~= "nil";
 end
 
+function CBoardClient:isHudVisible()
+	return Key:IsDown(self.iActivationButton);
+end
+
 -- Event Handlers:
 function CBoardClient:onMouseScroll(args)
-	self:setStartShowRow(self:getStartShowRow() - (args.delta * self.fScrollKoeff));
+	if (self:isHudVisible()) then
+		self:setStartShowRow(self:getStartShowRow() - (args.delta * self.fScrollKoeff));
+	end
 end
 
 -- Network event handlers:
@@ -96,7 +102,6 @@ function CBoardClient:onSyncPlayersData(data)
 	self.tServerPlayersData = data.playersData;
 	self.iServerSlots = data.slotsNum
 end
-
 
 
 Events:Subscribe("ModulesLoad", function()

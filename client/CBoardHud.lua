@@ -64,7 +64,7 @@ end
 -- Setters/Getters:
 function CBoardHud:getSize()
 	return { 
-				width = math.floor(self.ScreenSize.width * self.fBoardWidth), 
+				width = math.max(math.floor(self.ScreenSize.width * self.fBoardWidth), 500), 
 				height = math.floor(self.ScreenSize.height * self.fBoardHeight)
 		   };
 end
@@ -137,7 +137,7 @@ end
 function CBoardHud:DrawCanvas()
 	-- Under Header line
 	Render:DrawLine(Vector2(self.BoardPosition.x - 1, self.BoardPosition.y + self.fHeaderRowHeight), 
-		Vector2(self.BoardPosition.x + self.BoardSize.width + 1, self.BoardPosition.y + self.fHeaderRowHeight), 
+		Vector2(self.BoardPosition.x + self.BoardSize.width, self.BoardPosition.y + self.fHeaderRowHeight), 
 		self.Color_BordersColor);
 
 	return self;
@@ -203,7 +203,7 @@ end
 -- Event Handlers:
 function CBoardHud:Render()
 	self:Update();
-	if (not Key:IsDown(18))then
+	if (not self.CBoardClient:isHudVisible()) then
 			return end;
 
 	Mouse:SetVisible(false);
