@@ -23,3 +23,10 @@ Use "Mouse Scroll" for scroll players list.
 * Easily add your own columns
 * Changeable scroll settings
 * Not spagetti code 
+
+
+###FAQ
+
+##How can i change collumns?
+Open CBoardClient.lua, in "CBoardClient:__init" you can find "self.tBorderColls
+". It is columns data. Change it, if u need.
