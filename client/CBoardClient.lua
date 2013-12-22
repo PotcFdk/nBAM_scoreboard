@@ -1,6 +1,5 @@
 class 'CBoardClient'
 
-
 function CBoardClient:__init()
 	-- Board settings
 	self.iStartShowRow = 0; -- Start show players from
@@ -8,19 +7,26 @@ function CBoardClient:__init()
 	self.fBoardWidth = 0.4;
 	self.fBoardHeight = 0.75;
 
-	self.tBorderRows = 
+	self.tBorderColls = 
 	{
-		{name = "ID", width = 0.1, getter = function(p) return p:GetId(); end },
-		{name = "Player", width = 0.8, getter = function(p) return p:GetName(); end}
+		{name = "ID", width = 0.1, getter = function(CBoardClientInstance, p) return p:GetId(); end },
+		{name = "Player", width = 0.5, getter = function(CBoardClientInstance, p) return p:GetName(); end},
+		{name = "Money", width = 0.3, getter = function(CBoardClientInstance, p) return "$"..formatNumber(self.tServerPlayersData[p:GetId()].money); end},
+		{name = "Ping", width = 0.1, getter = function(CBoardClientInstance, p) return tostring(self.tServerPlayersData[p:GetId()].ping); end},
 	};
 
 	self.fScrollKoeff = 2;
 
-	-- Create CBoardHud class object for work with Hud.
-	self.CBoardGUI = CBoardHud(self, self.fBoardWidth, self.fBoardHeight, self.tBorderRows);
+	self.tServerPlayersData = {};
+
+	-- Create an instance of CBoardGUI
+	self.CBoardGUI = CBoardHud(self, self.fBoardWidth, self.fBoardHeight, self.tBorderColls);
 
 	-- Attach events handlers
-	Events:Subscribe("MouseScroll", self, self.MouseScroll);
+	Events:Subscribe("MouseScroll", self, self.onMouseScroll);
+
+	-- Attach network events handlers
+	Network:Subscribe("SyncPlayersData", self, self.onSyncPlayersData)
 end
 
 
@@ -51,9 +57,24 @@ function CBoardClient:setPlayers(players)
 end
 
 -- Event Handlers:
-function CBoardClient:MouseScroll(args)
+function CBoardClient:onMouseScroll(args)
 	self:setStartShowRow(self:getStartShowRow() - (args.delta * self.fScrollKoeff));
 end
+
+-- Network event handlers:
+function CBoardClient:onSyncPlayersData(data)
+	--[[
+	for id, tData in pairs(data) do
+		CDebug:Print("ID="..tostring(id));
+		for k, v in pairs(tData) do
+			CDebug:Print(tostring(k).." = "..tostring(v));
+		end
+	end
+	]]
+	self.tServerPlayersData = data;
+end
+
+
 
 Events:Subscribe("ModulesLoad", function()
 	CBoardClient = CBoardClient();

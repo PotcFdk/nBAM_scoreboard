@@ -22,7 +22,7 @@ end
 function CDebug:Print(text, type)
 	type = type or 3;
 	local typeData = self:GetTypeData(type);
-	local msg = typeData.prefix .. " "..text;
+	local msg = typeData.prefix .. " "..tostring(text);
 	Chat:Print(msg, typeData.color);
 end
 

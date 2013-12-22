@@ -1,6 +1,8 @@
 class 'CBoardHud'
 
-function CBoardHud:__init(CBoardClient, width, height, rows)
+function CBoardHud:__init(CBoardClient, width, height, collumns)
+
+	-- Create an instance of CBoardClient
 	self.CBoardClient = CBoardClient;
 
 	-- Settings:
@@ -20,10 +22,10 @@ function CBoardHud:__init(CBoardClient, width, height, rows)
 						   };
 	self.fPlayerRowHeight = 25;
 
-	self.tBorderRows = rows or
+	self.tBorderColls = collumns or
 	{
-		{name = "ID", width = 0.1, getter = function(p) return p:GetId(); end },
-		{name = "Player", width = 0.8, getter = function(p) return p:GetName(); end},
+		{name = "ID", width = 0.1, getter = function(CBoardClientInstance, p) return p:GetId(); end },
+		{name = "Player", width = 0.8, getter = function(CBoardClientInstance, p) return p:GetName(); end},
 	};
 
 	self.fScrollLineWidth = 10;
@@ -52,6 +54,8 @@ function CBoardHud:Update()
 	self:ResetRowsCounter();
 end
 
+
+-- Setters/Getters:
 function CBoardHud:getSize()
 	return { 
 				width = math.floor(self.ScreenSize.width * self.fBoardWidth), 
@@ -102,27 +106,14 @@ function CBoardHud:getBoardRealHeight()
 	return self.fBoardRealHeight or 0;
 end
 
-
-function CBoardHud:Render()
-	self:Update();
-	if (not Key:IsDown(18))then
-			return end;
-
-	Mouse:SetVisible(false);
-
-	self:DrawHeader();
-	self:DrawCanvas();
-	self:DrawPlayersRows();
-	self:DrawScrollLine();
-end
-
+-- Draw functions:
 function CBoardHud:DrawHeader()
 	Render:FillArea(Vector2(self.BoardPosition.x-1, self.BoardPosition.y), 
 		Vector2(self.BoardSize.width + 1, self.fHeaderRowHeight), self.Color_HeaderColor);
 
 	-- Header collumns:
 	local w = 0;
-	for i, v in ipairs(self.tBorderRows) do
+	for i, v in ipairs(self.tBorderColls) do
 		local text = v.name..":";
 		local height = Render:GetTextHeight(text, self.fTextSize, 1);
 		Render:DrawText(Vector2(w + self.BoardPosition.x + 10, self.BoardPosition.y + (self.fHeaderRowHeight / 2 - height / 2)), text, 
@@ -155,8 +146,8 @@ function CBoardHud:DrawPlayerRow(player, ddd)
 
 	-- Player collumns:
 	local w = 0;
-	for i, v in ipairs(self.tBorderRows) do
-		local text = tostring(v.getter(player));
+	for i, v in ipairs(self.tBorderColls) do
+		local text = tostring(v.getter(self.CBoardClient, player));
 		local height = Render:GetTextHeight(text, self.fTextSize, 1);
 		Render:DrawBorderedText(Vector2(w + self.BoardPosition.x + 10, y + (height / 2)), text..tostring(ddd), 
    			player:GetColor(), self.fTextSize, 1);
@@ -190,4 +181,18 @@ function CBoardHud:DrawScrollLine()
 		Vector2(self.fScrollLineWidth, scrollHeight), self.Color_ScrollLineColor.default);
 
 	return self;
+end
+
+-- Event Handlers:
+function CBoardHud:Render()
+	self:Update();
+	if (not Key:IsDown(18))then
+			return end;
+
+	Mouse:SetVisible(false);
+
+	self:DrawHeader();
+	self:DrawCanvas();
+	self:DrawPlayersRows();
+	self:DrawScrollLine();
 end
