@@ -1,5 +1,3 @@
-
---[[
 class 'CBoardServer'
 
 function CBoardServer:__init()
@@ -14,13 +12,23 @@ function CBoardServer:__init()
 
 	-- Attach event handlers
 	Events:Subscribe("PostTick", self, self.onPostTick);
+	Events:Subscribe("PlayerJoin", self, function() self:SyncPlayersData(); end);
 
 	-- Attach network events handlers
 	Network:Subscribe("SyncRequest", self, self.onSyncRequest);
 end
 
 function CBoardServer:SyncPlayersData()
-	Network:Broadcast("SyncPlayersData", 
+	Network:Broadcast("SyncPlayerData", 
+		{
+			playersData = self:getPlayersDataList(),
+			slotsNum = Config:GetValue("Server", "MaxPlayers")
+		});
+	return self;
+end
+
+function CBoardServer:SyncPlayerData(player)
+	Network:Send(player, "SyncPlayerData", 
 		{
 			playersData = self:getPlayersDataList(),
 			slotsNum = Config:GetValue("Server", "MaxPlayers")
@@ -52,12 +60,10 @@ end
 
 -- Network event handlers:
 function CBoardServer:onSyncRequest(source)
-	self:SyncPlayersData();
+	self:SyncPlayerData(source);
 end
 
 
-Events:Subscribe("ModuleLoad", function()
+Network:Subscribe("onClientLoaded", function()
 	CBoardServer = CBoardServer();
 end);
-
-]]

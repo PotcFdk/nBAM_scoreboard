@@ -28,12 +28,13 @@ function CBoardClient:__init()
 
 	-- Attach events handlers
 	Events:Subscribe("MouseScroll", self, self.onMouseScroll);
-	Events:Subscribe("PlayerJoin", self, function() self:SyncRequest(); end);
 
 	-- Attach network events handlers
-	Network:Subscribe("SyncPlayersData", self, self.onSyncPlayersData);
-end
+	Network:Subscribe("SyncPlayerData", self, self.onSyncPlayerData);
 
+	-- Activate server side
+	Network:Send("onClientLoaded", LocalPlayer);
+end
 
 function CBoardClient:Update()
 	self:setPlayers(Client:getServerPlayers());
@@ -90,20 +91,12 @@ function CBoardClient:onMouseScroll(args)
 end
 
 -- Network event handlers:
-function CBoardClient:onSyncPlayersData(data)
-	--[[
-	for id, tData in pairs(data) do
-		CDebug:Print("ID="..tostring(id));
-		for k, v in pairs(tData) do
-			CDebug:Print(tostring(k).." = "..tostring(v));
-		end
-	end
-	]]
+function CBoardClient:onSyncPlayerData(data)
 	self.tServerPlayersData = data.playersData;
 	self.iServerSlots = data.slotsNum
 end
 
 
-Events:Subscribe("ModulesLoad", function()
+Events:Subscribe("ModuleLoad", function()
 	CBoardClient = CBoardClient();
 end);
