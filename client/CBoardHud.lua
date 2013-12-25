@@ -193,7 +193,7 @@ end
 
 
 function CBoardHud:DrawSlotsInfo()
-	local text = "Player: " .. tostring(self.CBoardClient:getPlayersCount()) .. "/" .. tostring(self.CBoardClient:getServerSlots());
+	local text = "Players: " .. tostring(self.CBoardClient:getPlayersCount()) .. "/" .. tostring(self.CBoardClient:getServerSlots());
 	local width = Render:GetTextWidth(text, self.iSlotsInfoTextSize, 1);
 	Render:DrawBorderedText(Vector2(self.BoardPosition.x + self.BoardSize.width - self.tSlotsInfoTextPadding.right - width, self.BoardPosition.y + self:getBoardRealHeight() + self.tSlotsInfoTextPadding.top), text, 
    			self.Color_SlotsInfo, self.iSlotsInfoTextSize, 1);

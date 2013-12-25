@@ -1,3 +1,5 @@
+
+--[[
 class 'CBoardServer'
 
 function CBoardServer:__init()
@@ -54,6 +56,8 @@ function CBoardServer:onSyncRequest(source)
 end
 
 
-Events:Subscribe("ModulesLoad", function()
+Events:Subscribe("ModuleLoad", function()
 	CBoardServer = CBoardServer();
 end);
+
+]]

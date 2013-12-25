@@ -22,7 +22,6 @@ Use "Mouse Scroll" for scroll players list.
 * All parameters are changeable
 * Easily add your own columns
 * Changeable scroll settings
-* Not spagetti code 
 
 
 ###FAQ
