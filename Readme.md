@@ -33,11 +33,13 @@ Open "shared/config.lua" and change "COLUMNS" array.
 Open "shared/config.lua" and change "ACTIVATION_BUTTON" value.
 
 
-UPDATE Dec 25, 2013:
+
+
+###UPDATE Dec 25, 2013:
 * Fixed Load/Reload bug.
 * Synchronization optimized
 
-UPDATE Dec 29, 2013:
+###UPDATE Dec 29, 2013:
 * Fixed synchronization
 * Added "Kills" and "Deaths" columns as default
 * Updated columns width parameter.
