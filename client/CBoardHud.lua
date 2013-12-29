@@ -205,9 +205,6 @@ function CBoardHud:Render()
 	self:Update();
 	if (not self.CBoardClient:isHudVisible()) then
 			return end;
-
-	Mouse:SetVisible(false);
-
 	self:DrawHeader();
 	self:DrawCanvas();
 	self:DrawPlayersRows();

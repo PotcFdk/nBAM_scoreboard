@@ -1,6 +1,7 @@
 class 'CBoardServer'
 
 function CBoardServer:__init()
+	CDebug:Print("CBoardServer:__init");
 	self.tSyncData = 
 	{
 		ping = function(p) return p:GetPing(); end,
@@ -12,10 +13,10 @@ function CBoardServer:__init()
 
 	-- Attach event handlers
 	Events:Subscribe("PostTick", self, self.onPostTick);
-	Events:Subscribe("PlayerJoin", self, function() self:SyncPlayersData(); end);
 
 	-- Attach network events handlers
 	Network:Subscribe("SyncRequest", self, self.onSyncRequest);
+	Network:Subscribe("onClientLoaded", self, self.SyncPlayersData);
 end
 
 function CBoardServer:SyncPlayersData()
@@ -63,7 +64,6 @@ function CBoardServer:onSyncRequest(source)
 	self:SyncPlayerData(source);
 end
 
-
-Network:Subscribe("onClientLoaded", function()
+Events:Subscribe("ModuleLoad", function()
 	CBoardServer = CBoardServer();
 end);
