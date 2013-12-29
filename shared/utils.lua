@@ -5,6 +5,15 @@ function table.merge(table1, table2)
 	return table1;
 end
 
+function table.isValue(table1, value)
+	for i, v in ipairs(table1) do
+		if (v == value) then
+			return true;
+		end
+	end
+	return false;
+end
+
 function isClientSide()
 	return type(Render) == "userdata"; end
 

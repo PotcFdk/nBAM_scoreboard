@@ -1,6 +1,6 @@
 class 'CBoardHud'
 
-function CBoardHud:__init(CBoardClient, width, height, collumns)
+function CBoardHud:__init(CBoardClient, width, height, columns)
 
 	-- Create an instance of CBoardClient
 	self.CBoardClient = CBoardClient;
@@ -23,11 +23,12 @@ function CBoardHud:__init(CBoardClient, width, height, collumns)
 	self.Color_LocalPlayerRowColor = Color(255, 255, 255, 70);
 	self.fPlayerRowHeight = 25;
 
-	self.tBorderColls = collumns or
+	self.tBorderCols = columns or
 	{
 		{name = "ID", width = 0.1, getter = function(CBoardClientInstance, p) return p:GetId(); end },
 		{name = "Player", width = 0.8, getter = function(CBoardClientInstance, p) return p:GetName(); end},
 	};
+	self:ScalecolumnsWidth();
 
 	self.fScrollLineWidth = 10;
 	self.Color_ScrollLineColor = {
@@ -58,6 +59,17 @@ function CBoardHud:Update()
 
 	self:ResetBoardRealHeight();
 	self:ResetRowsCounter();
+end
+
+function CBoardHud:ScalecolumnsWidth()
+	local fWidth = 0;
+	for i, v in ipairs(self.tBorderCols) do
+		fWidth = fWidth + v.width;
+	end
+	for i, v in ipairs(self.tBorderCols) do
+		self.tBorderCols[i].width = self.tBorderCols[i].width / fWidth;
+	end
+	return self;
 end
 
 
@@ -117,9 +129,9 @@ function CBoardHud:DrawHeader()
 	Render:FillArea(Vector2(self.BoardPosition.x-1, self.BoardPosition.y), 
 		Vector2(self.BoardSize.width + 1, self.fHeaderRowHeight), self.Color_HeaderColor);
 
-	-- Header collumns:
+	-- Header columns:
 	local w = 0;
-	for i, v in ipairs(self.tBorderColls) do
+	for i, v in ipairs(self.tBorderCols) do
 		local text = v.name..":";
 		local height = Render:GetTextHeight(text, self.fTextSize, 1);
 		Render:DrawText(Vector2(w + self.BoardPosition.x + 10, self.BoardPosition.y + (self.fHeaderRowHeight / 2 - height / 2)), text, 
@@ -151,9 +163,9 @@ function CBoardHud:DrawPlayerRow(player)
 			Vector2(self.BoardSize.width + 1, self.fPlayerRowHeight), color);
 
 
-	-- Player collumns:
+	-- Player columns:
 	local w = 0;
-	for i, v in ipairs(self.tBorderColls) do
+	for i, v in ipairs(self.tBorderCols) do
 		local text = tostring(v.getter(self.CBoardClient, player));
 		local height = Render:GetTextHeight(text, self.fTextSize, 1);
 		Render:DrawBorderedText(Vector2(w + self.BoardPosition.x + 10, y + (height / 2)), text, 

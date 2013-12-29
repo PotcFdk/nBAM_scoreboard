@@ -7,6 +7,7 @@ Script allow instantly check information about online players.
 
 [![dxScoreboard sreenshot](https://dl.dropboxusercontent.com/s/8pz9wlf87b3ljh7/scoreboard.png?dl=1&token_hash=AAGhrLoy5b5WqlmoTei4TvqrRCnq6wgJ-2RATr1v9fI00Q)](https://github.com/Furdarius/dxScoreboard)
 
+[![dxScoreboard sreenshot](https://dl.dropboxusercontent.com/s/1xrgvbehlfgrzyh/scoreboard2.png?dl=1&token_hash=AAHFXtSEGw90n_dyzkweqzFQGW0KMXZQHJMw0qV5aauVSg)](https://github.com/Furdarius/dxScoreboard)
 
 ###Usage
 
@@ -26,5 +27,17 @@ Use "Mouse Scroll" for scroll players list.
 
 ###FAQ
 ####How can i change collumns?
-Open CBoardClient.lua, in "CBoardClient:__init" you can find "self.tBorderColls
-". It is columns data. Change it, if u need.
+Open "shared/config.lua" and change "COLUMNS" array.
+
+####How can i change activation button?
+Open "shared/config.lua" and change "ACTIVATION_BUTTON" value.
+
+
+UPDATE Dec 25, 2013:
+* Fixed Load/Reload bug.
+* Synchronization optimized
+
+UPDATE Dec 29, 2013:
+* Fixed synchronization
+* Added "Kills" and "Deaths" columns as default
+* Updated columns width parameter.
