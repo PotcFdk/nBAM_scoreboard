@@ -67,7 +67,7 @@ end
 
 function CBoardServer:onPlayerStatChanged(args)
 	if (table.isValue(SCOREBOARD_CONFIGURATION.INSTANT_STATS_UPDATE, args.stat)) then
-		Chat:Broadcast("CBoardServer:onPlayerStatChanged: ".. args.player:GetName().."'s stat \""..args.stat.."\" changed from "..tostring(args.oldvalue).." to "..tostring(args.newvalue), Color( 0, 255, 0 ));
+		--Chat:Broadcast("CBoardServer:onPlayerStatChanged: ".. args.player:GetName().."'s stat \""..args.stat.."\" changed from "..tostring(args.oldvalue).." to "..tostring(args.newvalue), Color( 0, 255, 0 ));
 		self:UpdatePlayerStats(args.player, args.stat);
 	end
 end

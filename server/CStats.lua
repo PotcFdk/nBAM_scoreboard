@@ -29,8 +29,10 @@ function CStats:onPlayerDeath(args)
 	local deaths = self:getPlayerStat(args.player, "deaths") or 0;
 	self:setPlayerStat(args.player, "deaths", deaths + 1);
 
-	local kills = self:getPlayerStat(args.killer, "kills") or 0;
-	self:setPlayerStat(args.killer, "kills", kills + 1);
+	if (args.killer) then
+		local kills = self:getPlayerStat(args.killer, "kills") or 0;
+		self:setPlayerStat(args.killer, "kills", kills + 1);
+	end
 end
 
 CStats = CStats();
