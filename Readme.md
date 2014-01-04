@@ -2,12 +2,15 @@
 
 This scoreboard is a modification / extension based on "Dx Scoreboard" by Flaker / Furdarius.
 
-It has one additional column that displays a player's [nBAM](https://github.com/PotcFdk/nBAM) rank.
+It has one additional column that displays a player's [nBAM](https://github.com/PotcFdk/nBAM) rank:
+
+![nBAM_scoreboard screenshot](https://dl.dropboxusercontent.com/u/34110473/github/nbam_scoreboard/nbam_scoreboard.png)
 
 List of changes:
 
 - Modified config to add the column.
 - Added file 'server/extension/Player.ext.lua' that connects the scoreboard to nBAM's group management.
+
 
 
 Original Readme.md:
