@@ -1,4 +1,18 @@
-#Dx Scoreboard
+#nBAM Scoreboard
+
+This scoreboard is a modification / extension based on "Dx Scoreboard" by Flaker / Furdarius.
+
+It has one additional column that displays a player's [nBAM](https://github.com/PotcFdk/nBAM) rank.
+
+List of changes:
+
+- Modified config to add the column.
+- Added file 'server/extension/Player.ext.lua' that connects the scoreboard to nBAM's group management.
+
+
+Original Readme.md:
+
+##Dx Scoreboard
 
 OpenSource Dx Scoreboard for JC2-MP servers. 
 
