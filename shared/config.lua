@@ -8,11 +8,11 @@ SCOREBOARD_CONFIGURATION =
 	COLUMNS = -- Scoreboard collumns
 	{
 		{name = "ID", width = 50, getter = function(CBoardClientInstance, p) return p:GetId(); end },
-		{name = "Rank", width = 70, getter = function(CBoardClientInstance, p) return tostring(CBoardClientInstance.tServerPlayersData[p:GetId()].group); end},
+		{name = "Rank", width = 80, getter = function(CBoardClientInstance, p) return tostring(CBoardClientInstance.tServerPlayersData[p:GetId()].group); end},
 		{name = "Player", width = 200, getter = function(CBoardClientInstance, p) return string.sub(p:GetName(), 1, 40); end},
-		{name = "Money", width = 120, getter = function(CBoardClientInstance, p) return "$"..formatNumber(CBoardClientInstance.tServerPlayersData[p:GetId()].money); end},
-		{name = "Kills", width = 100, getter = function(CBoardClientInstance, p) return tostring(CBoardClientInstance.tServerPlayersData[p:GetId()].kills); end},
-		{name = "Deaths", width = 100, getter = function(CBoardClientInstance, p) return tostring(CBoardClientInstance.tServerPlayersData[p:GetId()].deaths); end},
+		{name = "Money", width = 80, getter = function(CBoardClientInstance, p) return "$"..formatNumber(CBoardClientInstance.tServerPlayersData[p:GetId()].money); end},
+		{name = "Kills", width = 80, getter = function(CBoardClientInstance, p) return tostring(CBoardClientInstance.tServerPlayersData[p:GetId()].kills); end},
+		{name = "Deaths", width = 80, getter = function(CBoardClientInstance, p) return tostring(CBoardClientInstance.tServerPlayersData[p:GetId()].deaths); end},
 		{name = "Ping", width = 60, getter = function(CBoardClientInstance, p) return tostring(CBoardClientInstance.tServerPlayersData[p:GetId()].ping); end},
 	},
 
